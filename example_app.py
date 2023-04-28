@@ -103,16 +103,30 @@ def main():
     
     print('\n\n\n\n')
     print('-----Quiz 8-----')
+    
+    # printing ONLY states from states_only (as in, no Washington DC)
+    # num_states = 0
+    # for s in states_only:
+    #     if s.name == 'District of Columbia':
+    #         continue
+    #     print(f'{s.name}')
+    #     num_states += 1
+    # print(f'num_states = {num_states}')
+
     # 1. Given the sum of the population from the third, fourth
     # and fifth most populated counties in CA, how many US states
     # have a population less than the sum of these three counties?
+    
     ca_counties.sort(key=lambda x: x.population, reverse=True)
     counties_pop_one = ca_counties[2].population + ca_counties[3].population + ca_counties[4].population
+
     one_solution = 0
     for s in states_only:
-        if s.population < counties_pop_one:
+        if s.name == 'District of Columbia':
+            pass
+        elif s.population < counties_pop_one:
             one_solution += 1
-    
+
     print(f'1. {one_solution}')
 
 
@@ -122,7 +136,9 @@ def main():
     ca_counties.sort(key=lambda x: x.area_sq_mi)
     num_states_two = 0
     for s in states_only:
-        if s.land_area_sq_mi <= ca_counties[-1].area_sq_mi:
+        if s.name == 'District of Columbia':
+            pass
+        elif s.land_area_sq_mi <= ca_counties[-1].area_sq_mi:
             num_states_two += 1
 
     print(f'2. {num_states_two}')
@@ -137,26 +153,34 @@ def main():
     # What is the difference between ec_sum and the number of
     # Electoral College votes CA has? 
     # In other words: ec_sum - california.n_ec_votes
+
     states_only.sort(key=lambda x: x.population)
-    three_min_bound = 0
-    three_min_index = 0
-    three_upper_bound = 0
-    three_upper_index = 0
+    three_index = 0
+    three_bound = 0
     for s in states_only:
-        if three_min_bound >= 37956694 and three_min_bound <= 41119752:
+        if s.name == 'District of Columbia':
+            three_index += 1
+            continue
+        if three_bound + s.population > 41119752:
             break
-        three_min_bound += s.population
-        three_min_index += 1
+        elif three_bound < 37956694:
+            three_bound += s.population
+            three_index += 1
+        elif three_bound < 41119752:
+            three_bound += s.population
+            three_index += 1
 
-    three_upper_bound += three_min_bound
-    for s in states_only:
-        if three_upper_bound >= 41119752:
-            break
-        three_upper_bound += s.population
-        three_upper_index += 1
 
-    print(f'3. three_upper_index = {three_upper_index}, with pop: {three_min_bound}')
-    print(f'three_min_index = {three_min_index}')
+    ec_sum = 0
+    for s in range(three_index):
+        if states_only[s].name == 'District of Columbia':
+            continue
+        else:
+            ec_sum += states_only[s].n_ec_votes
+    print(f'3. ec_sum = {ec_sum}, ' 
+          f'{states_only[-1].name} ec votes: {states_only[-1].n_ec_votes}, '
+          f'ec_sum - CA_ec_votes = {ec_sum - states_only[-1].n_ec_votes}')
+
 
 
 if __name__ == '__main__':
