@@ -100,6 +100,64 @@ def main():
         f'{(ca_population_largest_counties / total_us_population) * 100:.2f}%'
         ' of the US population.'
     )
+    
+    print('\n\n\n\n')
+    print('-----Quiz 8-----')
+    # 1. Given the sum of the population from the third, fourth
+    # and fifth most populated counties in CA, how many US states
+    # have a population less than the sum of these three counties?
+    ca_counties.sort(key=lambda x: x.population, reverse=True)
+    counties_pop_one = ca_counties[2].population + ca_counties[3].population + ca_counties[4].population
+    one_solution = 0
+    for s in states_only:
+        if s.population < counties_pop_one:
+            one_solution += 1
+    
+    print(f'1. {one_solution}')
+
+
+
+    # 2. Find the county in CA that has the largest area.
+    # How many US states have a land area <= to this county?
+    ca_counties.sort(key=lambda x: x.area_sq_mi)
+    num_states_two = 0
+    for s in states_only:
+        if s.land_area_sq_mi <= ca_counties[-1].area_sq_mi:
+            num_states_two += 1
+
+    print(f'2. {num_states_two}')
+
+    # 3. Make a list of states from least to most populated 
+    # where their combined population is no less than 37,956,694
+    # and no greater than 41,119,752.
+    # 
+    # Once you have this list, sum up the total number of Electoral College
+    # votes these states have in total. Call this ec_sum.
+    # 
+    # What is the difference between ec_sum and the number of
+    # Electoral College votes CA has? 
+    # In other words: ec_sum - california.n_ec_votes
+    states_only.sort(key=lambda x: x.population)
+    three_min_bound = 0
+    three_min_index = 0
+    three_upper_bound = 0
+    three_upper_index = 0
+    for s in states_only:
+        if three_min_bound >= 37956694 and three_min_bound <= 41119752:
+            break
+        three_min_bound += s.population
+        three_min_index += 1
+
+    three_upper_bound += three_min_bound
+    for s in states_only:
+        if three_upper_bound >= 41119752:
+            break
+        three_upper_bound += s.population
+        three_upper_index += 1
+
+    print(f'3. three_upper_index = {three_upper_index}, with pop: {three_min_bound}')
+    print(f'three_min_index = {three_min_index}')
+
 
 if __name__ == '__main__':
     main()
